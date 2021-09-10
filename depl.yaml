@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ebpf-agent-deploy
+  labels:
+    app: ebpf-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ebpf-agent
+  template:
+    metadata:
+      labels:
+        app: ebpf-agent
+    spec:
+      containers:
+      - image: madhush/ebpf-for-mac 
+        name: ebpf-agent-for-mac
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: lib-modules
+          mountPath: /lib/modules
+        - name: etc-localtime
+          mountPath: /etc/localtime
+      volumes:
+      - name: lib-modules
+        hostPath:
+          path: /lib/modules
+      - name: etc-localtime
+        hostPath:
+          path: /etc/localtime
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ebpf-service
+spec:
+  selector:
+    app: ebpf-agent
+  ports:
+    - protocol: TCP
+      port: 9377
+      targetPort: 8000
+      nodePort: 31534
+  type: LoadBalancer
