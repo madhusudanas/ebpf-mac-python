@@ -1,0 +1,2 @@
+go build -ldflags "-s -w" test.go
+objdump --syms test | grep add
