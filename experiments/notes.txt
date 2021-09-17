@@ -1,0 +1,7 @@
+objdump --syms <exec>
+go build -ldflags "-s -w" <src>
+dd if=/dev/urandom of=/dev/null bs=1k count=5
+nodejs app/http_server.js > /dev/null & tplist-bpfcc -p $!
+
+
+apt-get install systemtap-sdt-dev
